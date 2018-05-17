@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/log_background"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/normalHeight"
+            android:layout_marginLeft="50px"
+            android:layout_marginRight="50px"
+            android:background="@color/transparentBlack"
+            android:hint="请输入账号"
+            android:paddingLeft="10px"
+            android:textColorHint="#ffffff"
+            android:textSize="15sp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/normalHeight"
+            android:layout_marginLeft="50px"
+            android:layout_marginRight="50px"
+            android:layout_marginTop="30px"
+            android:background="@color/transparentBlack"
+            android:hint="请输入密码"
+            android:inputType="textPassword"
+            android:paddingLeft="10px"
+            android:textColorHint="#ffffff"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="200px"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="@dimen/buttonWidth"
+                android:layout_height="@dimen/normalHeight"
+                android:background="@drawable/log_in_btn"
+                android:text="登录"
+                android:id="@+id/tv_log_in"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/tv_sign_in"
+                android:layout_width="@dimen/buttonWidth"
+                android:layout_height="@dimen/normalHeight"
+                android:layout_marginLeft="50px"
+                android:background="@drawable/log_in_btn"
+                android:text="注册"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -12,6 +12,7 @@
         android:orientation="vertical">
 
         <EditText
+            android:id="@+id/edit_phone"
             android:layout_width="match_parent"
             android:layout_height="@dimen/normalHeight"
             android:layout_marginLeft="50px"
@@ -19,10 +20,12 @@
             android:background="@color/transparentBlack"
             android:hint="请输入账号"
             android:paddingLeft="10px"
+            android:textColor="@color/white"
             android:textColorHint="#ffffff"
             android:textSize="15sp" />
 
         <EditText
+            android:id="@+id/edit_pwd"
             android:layout_width="match_parent"
             android:layout_height="@dimen/normalHeight"
             android:layout_marginLeft="50px"
@@ -32,6 +35,7 @@
             android:hint="请输入密码"
             android:inputType="textPassword"
             android:paddingLeft="10px"
+            android:textColor="@color/white"
             android:textColorHint="#ffffff"
             android:textSize="15sp" />
 
@@ -43,11 +47,11 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/tv_log_in"
                 android:layout_width="@dimen/buttonWidth"
                 android:layout_height="@dimen/normalHeight"
                 android:background="@drawable/log_in_btn"
                 android:text="登录"
-                android:id="@+id/tv_log_in"
                 android:textColor="@color/white" />
 
             <Button

@@ -2,6 +2,8 @@ package com.example.myapplication.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,8 +12,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,16 +25,24 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.Poi;
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapStatus;
-import com.baidu.mapapi.map.MapStatusUpdate;
-import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MyLocationConfiguration;
-import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.model.LatLng;
 import com.example.myapplication.R;
+import com.example.myapplication.config.AppConfiguration;
+import com.example.myapplication.entity.ResultEntity;
+import com.example.myapplication.tools.MyDialog;
+import com.example.myapplication.tools.ShowToast;
+import com.example.myapplication.tools.UserTools;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import net.tsz.afinal.FinalHttp;
+import net.tsz.afinal.http.AjaxCallBack;
+import net.tsz.afinal.http.AjaxParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -43,9 +55,9 @@ public class PublishTaskActivity extends Activity implements View.OnClickListene
     private Button btnSubmit;
     private MapView mMapView;
     private BaiduMap bdMap;
-    boolean firstLoc = true; //是否首次定位
     public LocationClient mLocationClient = null;
     public BDLocationListener myListener = new MyLocationListener();
+    private MyDialog diaLog;
 
     public class MyLocationListener implements BDLocationListener {
 
@@ -146,11 +158,17 @@ public class PublishTaskActivity extends Activity implements View.OnClickListene
         setContentView(R.layout.activity_publish);
         initView();
         initListener();
-        mLocationClient = new LocationClient(getApplicationContext());     //声明LocationClient类
-        mLocationClient.registerLocationListener(myListener);    //注册监听函数
-        initLocation();
+        initDialog();
+//        mLocationClient = new LocationClient(getApplicationContext());     //声明LocationClient类
+//        mLocationClient.registerLocationListener(myListener);    //注册监听函数
+//        initLocation();
     }
 
+    private void initDialog() {
+        diaLog = new MyDialog(PublishTaskActivity.this);
+        diaLog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        diaLog.setCancelable(true);
+    }
 
     private void initView() {
         left = this.findViewById(R.id.left);
@@ -173,15 +191,68 @@ public class PublishTaskActivity extends Activity implements View.OnClickListene
                 finish();
                 break;
             case R.id.submit:
-                Toast.makeText(PublishTaskActivity.this, "任务已成功提交", Toast.LENGTH_SHORT).show();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                }, 2000);
+                if (!diaLog.isShowing()) {
+                    diaLog.show();
+                }
+                postTask(AppConfiguration.url_post_task);
+
                 break;
         }
+    }
+
+    public void postTask(String url) {
+        AjaxParams params = new AjaxParams();
+        params.put("description", textContent.getText().toString());
+        SharedPreferences shareActionProvider = UserTools.getInstance().getInfo(PublishTaskActivity.this);
+        String id = shareActionProvider.getString("id", "");
+        Log.e("zhl", "id : " + id);
+        params.put("user_id", id);
+        FinalHttp fh = new FinalHttp();
+        fh.post(url, params, new AjaxCallBack<Object>() {
+
+            @Override
+            public void onFailure(Throwable t, int errorNo, String strMsg) {
+                Log.i("zhl", "onFailure:" + strMsg);
+                ShowToast.showToast(PublishTaskActivity.this, "发布失败！");
+                if (diaLog.isShowing()) {
+                    diaLog.dismiss();
+                }
+            }
+
+            @Override
+            public void onLoading(long count, long current) {
+                super.onLoading(count, current);
+            }
+
+            @Override
+            public void onStart() {
+                super.onStart();
+            }
+
+            @Override
+            public void onSuccess(Object t) {
+                try {
+                    JSONObject jsonObject = new JSONObject(t.toString());
+                    Log.e("zhl", jsonObject.toString());
+                    if (jsonObject.getInt("status") == 1) {
+                        ShowToast.showToast(PublishTaskActivity.this, "发布成功！");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 2000);
+                    } else {
+                        ShowToast.showToast(PublishTaskActivity.this, "发布失败！");
+                    }
+                    if (diaLog.isShowing()) {
+                        diaLog.dismiss();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override

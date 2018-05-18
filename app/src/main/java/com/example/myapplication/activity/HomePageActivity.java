@@ -31,6 +31,7 @@ public class HomePageActivity extends FragmentActivity implements View.OnClickLi
     private FrameLayout container;
     private FragmentManager fm;
     private Fragment taskFragment, publishFragment, mineFragment;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class HomePageActivity extends FragmentActivity implements View.OnClickLi
         setContentView(R.layout.activity_home_page);
         initView();
         initListener();
+        currentFragment = taskFragment;
         fm = getSupportFragmentManager();
         fm.beginTransaction().add(R.id.container, taskFragment, null).commit();
     }
@@ -47,7 +49,13 @@ public class HomePageActivity extends FragmentActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.task:
                 selectTag(0);
-                fm.beginTransaction().replace(R.id.container, taskFragment).commit();
+                if (!taskFragment.isAdded()) {
+                    fm.beginTransaction().hide(currentFragment).add(R.id.container, taskFragment).commit();
+                } else {
+                    fm.beginTransaction().hide(currentFragment).show(taskFragment).commit();
+                }
+                currentFragment = taskFragment;
+                // fm.beginTransaction().replace(R.id.container, taskFragment).commit();
                 break;
             case R.id.publish:
                 selectTag(1);
@@ -57,7 +65,13 @@ public class HomePageActivity extends FragmentActivity implements View.OnClickLi
                 break;
             case R.id.mine:
                 selectTag(2);
-                fm.beginTransaction().replace(R.id.container, mineFragment).commit();
+                if (!mineFragment.isAdded()) {
+                    fm.beginTransaction().hide(currentFragment).add(R.id.container, mineFragment).commit();
+                } else {
+                    fm.beginTransaction().hide(currentFragment).show(mineFragment).commit();
+                }
+                currentFragment = mineFragment;
+                //fm.beginTransaction().replace(R.id.container, mineFragment).commit();
                 break;
         }
     }

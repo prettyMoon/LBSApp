@@ -16,6 +16,7 @@ import com.example.myapplication.config.AppConfiguration;
 import com.example.myapplication.entity.ResultEntity;
 import com.example.myapplication.tools.MyDialog;
 import com.example.myapplication.tools.ShowToast;
+import com.example.myapplication.tools.UserTools;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -25,6 +26,8 @@ import net.tsz.afinal.http.AjaxParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 /**
  * Created by 孙福来 on 2018/4/15.
@@ -112,29 +115,33 @@ public class LogInActivity extends Activity implements View.OnClickListener {
             @Override
             public void onSuccess(Object t) {
                 try {
-                    JSONObject jsonObject = new JSONObject(t.toString());
+                    final JSONObject jsonObject = new JSONObject(t.toString());
                     Log.e("zhl", jsonObject.toString());
-                    Gson gson = new Gson();
-                    ResultEntity resultEntity = gson.fromJson(t.toString(), new TypeToken<ResultEntity>() {
-                    }.getType());
-                    if (diaLog.isShowing()) {
-                        diaLog.dismiss();
-                    }
-                    //登陆成功
-                    if (resultEntity.getStatus() == 1) {
+
+                    if (jsonObject.getInt("status") == 1) {
                         ShowToast.showToast(LogInActivity.this, "登录成功！");
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 Intent intent = new Intent(LogInActivity.this, HomePageActivity.class);
                                 startActivity(intent);
+                                HashMap<String, String> hashMap = new HashMap<String, String>();
+                                try {
+                                    hashMap.put("id", jsonObject.getJSONObject("content").getString("id"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                hashMap.put("phoneNumber", editTextPhoneNumber.getText().toString());
+                                UserTools.getInstance().saveInfo(LogInActivity.this, hashMap);
                                 finish();
                             }
                         }, 2000);
+                    } else if (jsonObject.getInt("status") != 1) {
+                        String str = jsonObject.getString("content");
+                        ShowToast.showToast(LogInActivity.this, str);
                     }
-                    //登陆失败
-                    if (resultEntity.getStatus() == 2) {
-                        ShowToast.showToast(LogInActivity.this, "登录失败！");
+                    if (diaLog.isShowing()) {
+                        diaLog.dismiss();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -148,12 +155,12 @@ public class LogInActivity extends Activity implements View.OnClickListener {
         Intent intent;
         switch (v.getId()) {
             case R.id.tv_log_in:
-//                if (validate()) {
-//                    diaLog.show();
-//                    doLogin(AppConfiguration.url_log_in);
-//                }
-                intent = new Intent(LogInActivity.this, HomePageActivity.class);
-                startActivity(intent);
+                if (validate()) {
+                    diaLog.show();
+                    doLogin(AppConfiguration.url_log_in);
+                }
+//                intent = new Intent(LogInActivity.this, HomePageActivity.class);
+//                startActivity(intent);
                 break;
             case R.id.tv_sign_in:
                 intent = new Intent(LogInActivity.this, RegisterActivity.class);

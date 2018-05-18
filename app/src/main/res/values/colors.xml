@@ -10,4 +10,9 @@
     <color name="themeYellow">#FFA600</color>
     <color name="textGrey">#707070</color>
     <color name="textBlack">#433B3B</color>
+    <color name="app_color_grey">#d5d5d5</color>
+    <color name="app_font_color_highlight">#ffffff</color>
+    <color name="app_font_color_black">#000000</color>
+    <color name="app_font_color_grey">#a3a3a3</color>
+    <color name="app_font_color_lightgrey">#FFFAFAFA</color>
 </resources>

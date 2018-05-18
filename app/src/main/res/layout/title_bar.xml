@@ -11,7 +11,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:gravity="center"
-        android:textColor="@color/textBlack"
+        android:textColor="@color/white"
         android:textSize="25sp" />
 
     <TextView
@@ -20,8 +20,8 @@
         android:layout_height="50dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="用戶名"
-        android:textColor="@color/textBlack"
+        android:text="主页"
+        android:textColor="@color/white"
         android:textSize="20sp" />
 
     <TextView

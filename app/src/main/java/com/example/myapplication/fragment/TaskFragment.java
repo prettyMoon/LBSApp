@@ -18,6 +18,7 @@ import com.example.myapplication.adapter.TaskListAdapter;
 import com.example.myapplication.config.AppConfiguration;
 import com.example.myapplication.tools.MyDialog;
 import com.example.myapplication.tools.ShowToast;
+import com.example.myapplication.tools.view.SmoothListView;
 
 import net.tsz.afinal.FinalHttp;
 import net.tsz.afinal.http.AjaxCallBack;
@@ -27,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,8 +37,8 @@ import java.util.List;
  * Created by 孙福来 on 2018/4/15.
  */
 
-public class TaskFragment extends Fragment {
-    private ListView listView;
+public class TaskFragment extends Fragment implements SmoothListView.ISmoothListViewListener {
+    private SmoothListView listView;
     private TaskListAdapter adapter;
     private List<HashMap<String, String>> dataList;
     private MyDialog diaLog;
@@ -52,7 +54,7 @@ public class TaskFragment extends Fragment {
     private void initView(View view) {
         initDialog();
         listView = view.findViewById(R.id.listView);
-        initListView(AppConfiguration.url_task_list);
+        initListView(AppConfiguration.url_task_list, true);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -69,6 +71,9 @@ public class TaskFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        listView.setSmoothListViewListener(this);
+        listView.setRefreshEnable(true);
+        listView.setLoadMoreEnable(false);
     }
 
     private void initDialog() {
@@ -77,8 +82,8 @@ public class TaskFragment extends Fragment {
         diaLog.setCancelable(true);
     }
 
-    public void initListView(String url) {
-        if (!diaLog.isShowing()) {
+    public void initListView(String url, final boolean firstLoad) {
+        if (!diaLog.isShowing() && firstLoad) {
             diaLog.show();
         }
         AjaxParams params = new AjaxParams();
@@ -118,6 +123,9 @@ public class TaskFragment extends Fragment {
                         if (dataList == null) {
                             dataList = new ArrayList<HashMap<String, String>>();
                         }
+                        if (dataList.size() > 1) {
+                            dataList.clear();
+                        }
                         Log.e("zhl", "1");
                         JSONArray array = jsonObject.getJSONArray("content");
                         for (int i = 0; i < array.length(); i++) {
@@ -132,13 +140,37 @@ public class TaskFragment extends Fragment {
                             map.put("status", object.getString("status"));
                             dataList.add(map);
                         }
-                        adapter = new TaskListAdapter(getActivity(), dataList);
-                        listView.setAdapter(adapter);
+                        if (firstLoad) {
+                            adapter = new TaskListAdapter(getActivity(), dataList);
+                            listView.setAdapter(adapter);
+                        } else {
+                            listView.stopRefresh();
+                            adapter.notifyDataSetChanged();
+                        }
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
+    }
+
+    public String timeStamp2Date(long timestamp) {
+        //时间戳转化为Sting或Date
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String d = format.format(timestamp);
+        return d;
+    }
+
+    @Override
+    public void onRefresh() {
+        listView.setRefreshTime(timeStamp2Date(System.currentTimeMillis()));
+        initListView(AppConfiguration.url_task_list, false);
+    }
+
+    @Override
+    public void onLoadMore() {
+
     }
 }

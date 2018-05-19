@@ -9,12 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.myapplication.R;
-import com.example.myapplication.activity.DoingActivity;
 import com.example.myapplication.activity.DoneActivity;
-import com.example.myapplication.activity.PublishTaskActivity;
+import com.example.myapplication.activity.TaskDoingActivity;
 import com.example.myapplication.activity.TodoActivity;
 
 /**
@@ -59,7 +57,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
                 break;
             case R.id.doing_layout:
-                intent = new Intent(getActivity(), DoingActivity.class);
+                intent = new Intent(getActivity(), TaskDoingActivity.class);
                 startActivity(intent);
                 break;
         }

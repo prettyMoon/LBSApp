@@ -46,11 +46,10 @@
 
         <activity android:name=".activity.HomePageActivity" />
         <activity android:name=".activity.PublishTaskActivity" />
-        <activity android:name=".activity.DoingActivity" />
         <activity android:name=".activity.TodoActivity" />
         <activity android:name=".activity.DoneActivity" />
         <activity android:name=".activity.RegisterActivity" />
-        <activity android:name=".activity.TaskDoneActivity" />
+        <activity android:name=".activity.TaskDoingActivity" />
         <activity android:name=".activity.TaskDetailActivity" />
         <!--service-->
         <service

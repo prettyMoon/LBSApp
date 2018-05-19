@@ -13,12 +13,9 @@ import android.widget.EditText;
 
 import com.example.myapplication.R;
 import com.example.myapplication.config.AppConfiguration;
-import com.example.myapplication.entity.ResultEntity;
 import com.example.myapplication.tools.MyDialog;
 import com.example.myapplication.tools.ShowToast;
 import com.example.myapplication.tools.UserTools;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import net.tsz.afinal.FinalHttp;
 import net.tsz.afinal.http.AjaxCallBack;
@@ -60,7 +57,7 @@ public class LogInActivity extends Activity implements View.OnClickListener {
         btnLogIn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent = new Intent(LogInActivity.this, TaskDoneActivity.class);
+                Intent intent = new Intent(LogInActivity.this, TaskDoingActivity.class);
                 startActivity(intent);
                 return false;
             }

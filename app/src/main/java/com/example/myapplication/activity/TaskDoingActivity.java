@@ -27,7 +27,7 @@ import java.io.File;
  * Created by hongli on 2018/5/18.
  */
 
-public class TaskDoneActivity extends Activity implements View.OnClickListener {
+public class TaskDoingActivity extends Activity implements View.OnClickListener {
     private Button btnCamera, btnAlbum;
     // 拍照回传码
     public final static int CAMERA_REQUEST_CODE = 0;
@@ -41,7 +41,7 @@ public class TaskDoneActivity extends Activity implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task_done);
+        setContentView(R.layout.activity_task_doing);
         btnCamera = this.findViewById(R.id.camera);
         btnAlbum = this.findViewById(R.id.album);
         btnCamera.setOnClickListener(this);
@@ -52,12 +52,12 @@ public class TaskDoneActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.camera:
-                if (ContextCompat.checkSelfPermission(TaskDoneActivity.this,
+                if (ContextCompat.checkSelfPermission(TaskDoingActivity.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {   //权限还没有授予，需要在这里写申请权限的代码
                     // 第二个参数是一个字符串数组，里面是你需要申请的权限 可以设置申请多个权限
                     // 最后一个参数是标志你这次申请的权限，该常量在onRequestPermissionsResult中使用到
-                    ActivityCompat.requestPermissions(TaskDoneActivity.this,
+                    ActivityCompat.requestPermissions(TaskDoingActivity.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             CAMERA_REQUEST_CODE);
                 } else {
@@ -66,12 +66,12 @@ public class TaskDoneActivity extends Activity implements View.OnClickListener {
                 }
                 break;
             case R.id.album:
-                if (ContextCompat.checkSelfPermission(TaskDoneActivity.this,
+                if (ContextCompat.checkSelfPermission(TaskDoingActivity.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {   //权限还没有授予，需要在这里写申请权限的代码
                     // 第二个参数是一个字符串数组，里面是你需要申请的权限 可以设置申请多个权限
                     // 最后一个参数是标志你这次申请的权限，该常量在onRequestPermissionsResult中使用到
-                    ActivityCompat.requestPermissions(TaskDoneActivity.this,
+                    ActivityCompat.requestPermissions(TaskDoingActivity.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             CAMERA_REQUEST_CODE);
                 } else { //权限已经被授予，在这里直接写要执行的相应方法即可
@@ -105,8 +105,8 @@ public class TaskDoneActivity extends Activity implements View.OnClickListener {
         mTempPhotoPath = Environment.getExternalStorageDirectory() + File.separator + "photo.jpeg";
         // 获取图片所在位置的Uri路径    *****这里为什么这么做参考问题2*****
                 /*imageUri = Uri.fromFile(new File(mTempPhotoPath));*/
-        imageUri = FileProvider.getUriForFile(TaskDoneActivity.this,
-                TaskDoneActivity.this.getApplicationContext().getPackageName() + ".my.provider",
+        imageUri = FileProvider.getUriForFile(TaskDoingActivity.this,
+                TaskDoingActivity.this.getApplicationContext().getPackageName() + ".my.provider",
                 new File(mTempPhotoPath));
         //下面这句指定调用相机拍照后的照片存储的路径
         intentToTakePhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -162,7 +162,7 @@ public class TaskDoneActivity extends Activity implements View.OnClickListener {
                 takePhoto();
             } else {
                 // Permission Denied
-                Toast.makeText(TaskDoneActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TaskDoingActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
         if (requestCode == GALLERY_REQUEST_CODE) {
@@ -170,7 +170,7 @@ public class TaskDoneActivity extends Activity implements View.OnClickListener {
                 choosePhoto();
             } else {
                 // Permission Denied
-                Toast.makeText(TaskDoneActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TaskDoingActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

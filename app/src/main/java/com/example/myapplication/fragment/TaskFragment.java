@@ -60,7 +60,7 @@ public class TaskFragment extends Fragment implements SmoothListView.ISmoothList
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
                 Bundle bundle = new Bundle();
-                HashMap<String, String> map = dataList.get(position);
+                HashMap<String, String> map = dataList.get(position-1);
                 bundle.putString("user_id", map.get("user_id"));
                 bundle.putString("publish_time", map.get("publish_time"));
                 bundle.putString("accept_user_id", map.get("accept_user_id"));

@@ -4,15 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/camera"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="相机" />
+    <include layout="@layout/title_bar" />
 
-    <Button
-        android:id="@+id/album"
+    <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="相册" />
+        android:layout_height="match_parent"
+        android:divider="#e1e0e0"
+        android:dividerHeight="1px" />
 </LinearLayout>

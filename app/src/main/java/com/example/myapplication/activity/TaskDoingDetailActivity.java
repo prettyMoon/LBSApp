@@ -4,17 +4,16 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.adapter.TaskListAdapter;
+import com.example.myapplication.adapter.ProgressListAdapter;
 import com.example.myapplication.config.AppConfiguration;
 import com.example.myapplication.tools.MyDialog;
 import com.example.myapplication.tools.ShowToast;
@@ -31,28 +30,31 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by hongli on 2018/5/19.
  */
 
-public class TaskDetailActivity extends Activity implements View.OnClickListener {
+public class TaskDoingDetailActivity extends Activity implements View.OnClickListener {
     private TextView tvLeft, tvMiddle, tvTime, tvUser, tvDescription;
-    private Button btnSubmit;
     private Bundle bundle;
     private MyDialog diaLog;
+    private ListView listView;
+    private List<HashMap<String, String>> dataList;
+    private ProgressListAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task_detail);
+        setContentView(R.layout.activity_task_doing_detail);
         initView();
-        initContent();
         initDialog();
+        initContent();
     }
 
     private void initDialog() {
-        diaLog = new MyDialog(TaskDetailActivity.this);
+        diaLog = new MyDialog(TaskDoingDetailActivity.this);
         diaLog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         diaLog.setCancelable(true);
     }
@@ -65,8 +67,7 @@ public class TaskDetailActivity extends Activity implements View.OnClickListener
         tvTime = this.findViewById(R.id.tv_date);
         tvUser = this.findViewById(R.id.tv_user);
         tvDescription = this.findViewById(R.id.tv_description);
-        btnSubmit = this.findViewById(R.id.submit);
-        btnSubmit.setOnClickListener(this);
+        listView = this.findViewById(R.id.listView);
     }
 
     private void initContent() {
@@ -75,6 +76,10 @@ public class TaskDetailActivity extends Activity implements View.OnClickListener
         tvTime.setText(date);
         tvUser.setText("用户" + bundle.getString("id"));
         tvDescription.setText(bundle.getString("description"));
+        if (!diaLog.isShowing()) {
+            diaLog.show();
+        }
+        initProgress(AppConfiguration.url_task_data);
     }
 
     public String timeStamp2Date(long timestamp) {
@@ -87,34 +92,25 @@ public class TaskDetailActivity extends Activity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.submit:
-                if (!diaLog.isShowing()) {
-                    diaLog.show();
-                }
-                doAccept(AppConfiguration.url_accept_task);
-                break;
             case R.id.left:
                 finish();
                 break;
         }
     }
 
-    public void doAccept(String url) {
+    public void initProgress(String url) {
         if (!diaLog.isShowing()) {
             diaLog.show();
         }
         AjaxParams params = new AjaxParams();
         params.put("task_id", bundle.getString("id"));
-        SharedPreferences sp = UserTools.getInstance().getInfo(TaskDetailActivity.this);
-        String id = sp.getString("id", "");
-        params.put("user_id", id);
         FinalHttp fh = new FinalHttp();
         fh.post(url, params, new AjaxCallBack<Object>() {
 
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
                 Log.i("zhl", "onFailure:" + strMsg);
-                ShowToast.showToast(TaskDetailActivity.this, "请求失败！");
+                ShowToast.showToast(TaskDoingDetailActivity.this, "请求失败！");
                 if (diaLog.isShowing()) {
                     diaLog.dismiss();
                 }
@@ -136,18 +132,21 @@ public class TaskDetailActivity extends Activity implements View.OnClickListener
                     if (diaLog.isShowing()) {
                         diaLog.dismiss();
                     }
+                    dataList = new ArrayList<HashMap<String, String>>();
                     JSONObject jsonObject = new JSONObject(t.toString());
-                    Log.e("zhl", jsonObject.toString());
+                    Log.e("zhl task_data", jsonObject.toString());
                     if (jsonObject.getInt("status") == 1) {
-                        ShowToast.showToast(TaskDetailActivity.this, "请求成功！");
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                            }
-                        }, 2000);
+                        JSONArray array = jsonObject.getJSONArray("content");
+                        for (int i = 0; i < array.length(); i++) {
+                            HashMap<String, String> map = new HashMap<String, String>();
+                            map.put("msg", array.getJSONObject(i).getString("msg"));
+                            map.put("link", array.getJSONObject(i).getString("link"));
+                            dataList.add(map);
+                        }
+                        adapter = new ProgressListAdapter(dataList, TaskDoingDetailActivity.this);
+                        listView.setAdapter(adapter);
                     } else {
-                        ShowToast.showToast(TaskDetailActivity.this, jsonObject.getString("content"));
+                        ShowToast.showToast(TaskDoingDetailActivity.this, jsonObject.getString("content"));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

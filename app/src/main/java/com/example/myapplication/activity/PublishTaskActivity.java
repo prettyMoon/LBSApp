@@ -159,9 +159,6 @@ public class PublishTaskActivity extends Activity implements View.OnClickListene
         initView();
         initListener();
         initDialog();
-//        mLocationClient = new LocationClient(getApplicationContext());     //声明LocationClient类
-//        mLocationClient.registerLocationListener(myListener);    //注册监听函数
-//        initLocation();
     }
 
     private void initDialog() {

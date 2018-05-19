@@ -57,7 +57,7 @@ public class LogInActivity extends Activity implements View.OnClickListener {
         btnLogIn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent = new Intent(LogInActivity.this, TaskDoingActivity.class);
+                Intent intent = new Intent(LogInActivity.this, UploadDataActivity.class);
                 startActivity(intent);
                 return false;
             }
